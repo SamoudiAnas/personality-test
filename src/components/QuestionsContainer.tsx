@@ -105,6 +105,7 @@ export default function QuestionsContainer({
         >
           {currentQuestions.map((question, index) => (
             <div
+              key={index}
               className={`${
                 currentShownQuestion !== index
                   ? ""

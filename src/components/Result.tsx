@@ -57,8 +57,11 @@ const Result = ({ results, resetTest, isOpen, setIsOpen }: ResultProps) => {
                 Here are the results
               </AlertDialogPrimitive.Description>
               <div className="my-8">
-                {Object.keys(results ?? {}).map((key) => (
-                  <div className="grid grid-cols-[10rem_1fr_2rem] items-center gap-4">
+                {Object.keys(results ?? {}).map((key, index) => (
+                  <div
+                    key={index}
+                    className="grid grid-cols-[10rem_1fr_2rem] items-center gap-4"
+                  >
                     <p className="capitalize dark:text-white">{key}</p>
                     <ProgressPrimitive.Root
                       value={results && results[key as PersonalityKeys]}
