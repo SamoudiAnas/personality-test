@@ -24,20 +24,20 @@ To get started with this project, follow the instructions below.
 
 1. Clone the repository:
 
-````bash
+```sh
 git clone https://github.com/SamoudiAnas/personality-test.git
 ```
 
 2. Install dependencies:
 
-```bash
+```sh
 cd personality-test
 npm install
 ```
 
 3. Start the development server:
 
-```bash
+```sh
 npm run dev
 ```
 
