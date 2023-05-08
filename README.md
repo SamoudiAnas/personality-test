@@ -26,17 +26,20 @@ To get started with this project, follow the instructions below.
 
 ````bash
 git clone https://github.com/SamoudiAnas/personality-test.git
+```
 
 2. Install dependencies:
 
 ```bash
 cd personality-test
 npm install
+```
 
 3. Start the development server:
 
 ```bash
 npm run dev
+```
 
 This will start the development server at [http://localhost:3000](http://localhost:3000).
 
@@ -55,4 +58,4 @@ Contributions are welcome! If you find any issues or have any suggestions for im
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-````
+
