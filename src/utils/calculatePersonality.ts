@@ -1,3 +1,7 @@
+/* reference to the test: 
+ https://openpsychometrics.org/printable/big-five-personality-test.pdf 
+ it explains why we put these numbers in their respective places */
+
 export function calculatePersonality(result: number[]) {
   let extroversion =
     20 +
@@ -72,5 +76,3 @@ export function calculatePersonality(result: number[]) {
     experience,
   };
 }
-
-//reference to the test: https://openpsychometrics.org/printable/big-five-personality-test.pdf

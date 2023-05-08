@@ -1,17 +1,45 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, SetStateAction, useState, Dispatch } from "react";
 
-import { questions } from "@/config/questions";
+import { questions } from "@/lib/questions";
 import { sliceIntoChunks } from "@/utils/sliceIntoChunks";
 
 import Question from "./Question";
 import Progress from "./Progress";
+import { ResultType } from "@/types/allTypes";
+import axios from "axios";
 
-export default function QuestionModal() {
-  const [questionsScores, setQuestionsScores] = useState<number[]>([]);
-  const [currentSetIndex, setCurrentSetIndex] = useState(0);
-  const [currentAnswerScore, setcurrentAnswerScore] = useState(0);
-  const [currentShownQuestion, setCurrentShownQuestion] = useState(0);
+const LAST_QUESTION_IDX = 9;
+const LAST_QUESTIONS_GROUP = 4;
+const QUESTIONS_NUMBER = 50;
 
+const QUESTION_HEIGHT_SIZE = 274; // in px
+const OFFSET_Y_FIX = 137; //in px
+
+interface QuestionsContainerProps {
+  questionsScores: number[];
+  setQuestionsScores: Dispatch<SetStateAction<number[]>>;
+  currentSetIndex: number;
+  setCurrentSetIndex: Dispatch<SetStateAction<number>>;
+  currentAnswerScore: number;
+  setcurrentAnswerScore: Dispatch<SetStateAction<number>>;
+  currentShownQuestion: number;
+  setCurrentShownQuestion: Dispatch<SetStateAction<number>>;
+  setResults: Dispatch<SetStateAction<ResultType | null>>;
+  setIsResultOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+export default function QuestionsContainer({
+  questionsScores,
+  setQuestionsScores,
+  currentSetIndex,
+  setCurrentSetIndex,
+  currentAnswerScore,
+  setcurrentAnswerScore,
+  currentShownQuestion,
+  setCurrentShownQuestion,
+  setResults,
+  setIsResultOpen,
+}: QuestionsContainerProps) {
   const [currentQuestions, setCurrentQuestions] = useState<string[]>(
     sliceIntoChunks(questions, 10)[currentSetIndex]
   );
@@ -21,7 +49,10 @@ export default function QuestionModal() {
     setQuestionsScores((prev) => [...prev, value]);
     setCurrentShownQuestion((prev) => prev + 1);
 
-    if (currentShownQuestion === 9 && currentSetIndex !== 4) {
+    if (
+      currentShownQuestion === LAST_QUESTION_IDX &&
+      currentSetIndex !== LAST_QUESTIONS_GROUP
+    ) {
       //reset question and start from 0
       setCurrentShownQuestion(0);
       setCurrentQuestions(
@@ -34,29 +65,28 @@ export default function QuestionModal() {
 
   const handleProgress = (): number => {
     //if it reaches the last question
-    if (currentShownQuestion > 9 && currentSetIndex === 4) {
+    if (
+      currentShownQuestion > LAST_QUESTION_IDX &&
+      currentSetIndex === LAST_QUESTIONS_GROUP
+    ) {
       return 100;
     }
     return currentSetIndex * 20;
   };
 
   const getPersonalityResult = async () => {
-    await fetch("/api/personality", {
-      method: "POST",
-      headers: {
-        Accept: "application.json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(questionsScores),
-      cache: "default",
+    await axios.post("/api/personality", questionsScores).then((res) => {
+      setIsResultOpen(true);
+      setResults(res.data);
     });
   };
 
   useEffect(() => {
+    console.log(currentShownQuestion, currentSetIndex, questionsScores.length);
     if (
-      currentShownQuestion === 9 &&
-      currentSetIndex === 4 &&
-      questionsScores.length === 50
+      currentShownQuestion >= LAST_QUESTION_IDX &&
+      currentSetIndex === LAST_QUESTIONS_GROUP &&
+      questionsScores.length === QUESTIONS_NUMBER
     ) {
       getPersonalityResult();
     }
@@ -68,7 +98,9 @@ export default function QuestionModal() {
         <div
           className="transition-all absolute w-full top-1/2"
           style={{
-            transform: ` translateY(-${currentShownQuestion * 274 + 137}px)`,
+            transform: ` translateY(-${
+              currentShownQuestion * QUESTION_HEIGHT_SIZE + OFFSET_Y_FIX
+            }px)`,
           }}
         >
           {currentQuestions.map((question, index) => (

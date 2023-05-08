@@ -1,14 +1,33 @@
 import Head from "next/head";
-import { useEffect } from "react";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import { useIsMounted } from "@/hooks/useIsMounted";
 
 import Header from "@/components/Header";
-import QuestionModal from "@/components/QuestionModal";
+import Result from "@/components/Result";
+import QuestionsContainer from "@/components/QuestionsContainer";
+import { ResultType } from "@/types/allTypes";
 
 export default function Home() {
   const { setTheme } = useTheme();
   const { isMounted } = useIsMounted();
+
+  const [results, setResults] = useState<ResultType | null>(null);
+  const [isResultOpen, setIsResultOpen] = useState(false);
+
+  const [questionsScores, setQuestionsScores] = useState<number[]>([]);
+  const [currentSetIndex, setCurrentSetIndex] = useState(0);
+  const [currentAnswerScore, setcurrentAnswerScore] = useState(0);
+  const [currentShownQuestion, setCurrentShownQuestion] = useState(0);
+
+  const resetTest = () => {
+    setIsResultOpen(false);
+    setResults(null);
+    setCurrentSetIndex(0);
+    setQuestionsScores([]);
+    setcurrentAnswerScore(0);
+    setCurrentShownQuestion(0);
+  };
 
   useEffect(() => {
     setTheme("dark");
@@ -28,7 +47,24 @@ export default function Home() {
 
       <div className="flex flex-col w-full">
         <Header />
-        <QuestionModal />
+        <QuestionsContainer
+          questionsScores={questionsScores}
+          setQuestionsScores={setQuestionsScores}
+          currentSetIndex={currentSetIndex}
+          setCurrentSetIndex={setCurrentSetIndex}
+          currentAnswerScore={currentAnswerScore}
+          setcurrentAnswerScore={setcurrentAnswerScore}
+          currentShownQuestion={currentShownQuestion}
+          setCurrentShownQuestion={setCurrentShownQuestion}
+          setResults={setResults}
+          setIsResultOpen={setIsResultOpen}
+        />
+        <Result
+          results={results}
+          resetTest={resetTest}
+          isOpen={isResultOpen}
+          setIsOpen={setIsResultOpen}
+        />
       </div>
     </div>
   );
